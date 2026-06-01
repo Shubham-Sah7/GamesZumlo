@@ -23,7 +23,7 @@ export function HoneydewWelcomeScreen({ title, description, onStart, startLabel 
     >
       {/* Honeydew Mascot */}
       <div className="mb-8">
-        <HoneydewMascot size={120} />
+        <HoneydewMascot size={120} mood="happy" onTap={() => console.log('Tap!')} />
       </div>
 
       {/* Title */}

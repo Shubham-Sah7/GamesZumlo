@@ -40,7 +40,7 @@ export function HoneydewCompletionScreen({ message, onContinue, stats }: Honeyde
     >
       {/* Honeydew Mascot */}
       <div className="mb-8">
-        <HoneydewMascot size={120} />
+        <HoneydewMascot size={120} mood="celebrating" />
       </div>
 
       {/* Title - Large and friendly */}

@@ -11,7 +11,7 @@ export function WelcomeScreen({ onStart }: WelcomeScreenProps) {
     <div className="flex h-full w-full flex-col items-center justify-center px-8">
       {/* Zummi centered */}
       <div className="mb-8">
-        <HoneydewMascot size={140} />
+        <HoneydewMascot size={140} mood="happy" onTap={() => console.log('Tap!')} />
       </div>
 
       {/* Title */}

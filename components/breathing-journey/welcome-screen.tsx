@@ -10,7 +10,7 @@ export function WelcomeScreen({ onStart }: WelcomeScreenProps) {
   return (
     <div className="flex h-full w-full flex-col items-center justify-center px-8">
       <div className="mb-8">
-        <HoneydewMascot size={120} />
+        <HoneydewMascot size={120} mood="happy" onTap={() => console.log('Tap!')} />
       </div>
 
       <h1

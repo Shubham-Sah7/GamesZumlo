@@ -29,7 +29,7 @@ export function CompletionScreen({
     <div className="flex h-full w-full flex-col items-center justify-center px-8">
       {/* Mascot */}
       <div className="mb-6 animate-[fadeIn_0.6s_ease-out]">
-        <HoneydewMascot size={100} />
+        <HoneydewMascot size={100} mood="celebrating" />
       </div>
 
       {/* Title */}

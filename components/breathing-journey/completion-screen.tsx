@@ -19,7 +19,7 @@ export function CompletionScreen() {
       style={{ transition: "opacity 0.8s ease-out", opacity }}
     >
       <div className="mb-8">
-        <HoneydewMascot size={120} />
+        <HoneydewMascot size={120} mood="celebrating" />
       </div>
 
       <h2
