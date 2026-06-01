@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useMemo } from 'react'
+import { useState } from 'react'
 import { SCENES, type Scene } from './scenes'
 
 // ── Palette ───────────────────────────────────────────────────────────────────
@@ -57,48 +57,23 @@ export function ColorYourWorld({ onComplete }: Props) {
     })
   }
 
-  // Progress bar colour
-  const barColor = pct >= 75 ? '#22C55E' : pct >= 40 ? COLORS.teal : '#F97316'
-
   return (
     <div
       style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', background: COLORS.bg, userSelect: 'none', WebkitUserSelect: 'none' }}
       onClick={() => showPalette && setShowPalette(false)}
     >
-      {/* ── Top bar ────────────────────────────────────────────────────────── */}
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '52px 18px 8px', flexShrink: 0 }}>
-        {/* Scene chip */}
-        <div style={{ background: 'rgba(255,255,255,0.7)', backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)', border: '1px solid rgba(255,255,255,0.85)', borderRadius: 999, padding: '8px 14px', display: 'flex', alignItems: 'center', gap: 6 }}>
-          <span style={{ fontSize: 16 }}>{scene.emoji}</span>
-          <div>
-            <div style={{ fontSize: 13, fontWeight: 700, color: COLORS.deepOcean, letterSpacing: '-0.01em', lineHeight: 1.2 }}>{scene.name}</div>
-            <div style={{ fontSize: 10, color: '#57A99A', fontWeight: 500, letterSpacing: '0.02em' }}>{scene.mood}</div>
-          </div>
-        </div>
-
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-          {/* Progress badge */}
-          <div style={{ background: 'rgba(255,255,255,0.7)', backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)', border: '1px solid rgba(255,255,255,0.85)', borderRadius: 999, padding: '7px 12px', textAlign: 'center' }}>
-            <div style={{ fontSize: 15, fontWeight: 800, color: barColor, fontVariantNumeric: 'tabular-nums', lineHeight: 1 }}>{pct}%</div>
-            <div style={{ fontSize: 9, color: '#888', letterSpacing: '0.04em', marginTop: 1 }}>colored</div>
-          </div>
-
-          <button onClick={onComplete} style={{ background: COLORS.deepOcean, color: '#fff', borderRadius: 999, padding: '9px 18px', fontSize: 14, fontWeight: 600, border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 5 }}>
-            Done
-            <svg width={13} height={13} fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24">
-              <path d="M5 12h14M13 6l6 6-6 6" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
-          </button>
-        </div>
-      </div>
-
-      {/* Progress bar */}
-      <div style={{ height: 3, background: 'rgba(255,255,255,0.3)', margin: '0 18px', flexShrink: 0, borderRadius: 999, overflow: 'hidden' }}>
-        <div style={{ height: '100%', width: `${pct}%`, background: barColor, borderRadius: 999, transition: 'width 0.4s ease, background 0.4s ease' }} />
+      {/* ── Minimal Top bar ────────────────────────────────────────────────── */}
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', padding: '16px 18px 8px', flexShrink: 0 }}>
+        <button onClick={onComplete} style={{ background: COLORS.deepOcean, color: '#fff', borderRadius: 999, padding: '9px 18px', fontSize: 14, fontWeight: 600, border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 5 }}>
+          Done
+          <svg width={13} height={13} fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24">
+            <path d="M5 12h14M13 6l6 6-6 6" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+        </button>
       </div>
 
       {/* ── SVG Canvas ─────────────────────────────────────────────────────── */}
-      <div style={{ flex: 1, margin: '8px 14px', borderRadius: 22, overflow: 'hidden', background: '#FAFAF8', boxShadow: '0 2px 20px rgba(0,0,0,0.09), inset 0 0 0 1px rgba(0,0,0,0.05)', position: 'relative' }}>
+      <div style={{ flex: 1, margin: '0 14px 8px', borderRadius: 22, overflow: 'hidden', background: '#FAFAF8', boxShadow: '0 2px 20px rgba(0,0,0,0.09), inset 0 0 0 1px rgba(0,0,0,0.05)', position: 'relative' }}>
         <svg
           width="100%"
           height="100%"
@@ -209,7 +184,7 @@ export function ColorYourWorld({ onComplete }: Props) {
 
       {/* ── Toast notification ─────────────────────────────────────────────── */}
       {toast && (
-        <div style={{ position: 'absolute', top: 115, left: '50%', transform: 'translateX(-50%)', background: COLORS.deepOcean, color: '#fff', borderRadius: 999, padding: '10px 22px', fontSize: 13, fontWeight: 600, whiteSpace: 'nowrap', boxShadow: '0 4px 20px rgba(0,0,0,0.25)', zIndex: 100, pointerEvents: 'none', animation: 'cyw-toast 0.3s ease-out' }}>
+        <div style={{ position: 'absolute', top: 70, left: '50%', transform: 'translateX(-50%)', background: COLORS.deepOcean, color: '#fff', borderRadius: 999, padding: '10px 22px', fontSize: 13, fontWeight: 600, whiteSpace: 'nowrap', boxShadow: '0 4px 20px rgba(0,0,0,0.25)', zIndex: 100, pointerEvents: 'none', animation: 'cyw-toast 0.3s ease-out' }}>
           {toast}
         </div>
       )}
