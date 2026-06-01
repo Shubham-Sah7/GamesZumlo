@@ -1,35 +1,12 @@
 import Link from 'next/link'
 
-const GAMES = [
-  {
-    emoji: '🌧',
-    title: 'Clear My Mind',
-    description: 'Release what no longer serves you',
-    href: '/rain-drop-cleanse',
-    category: 'RELEASE',
-    available: true,
-  },
-  {
-    emoji: '🧱',
-    title: 'Brick Breaker',
-    description: 'Break through mental clutter',
-    href: '/brick-breaker',
-    category: 'CLARITY',
-    available: true,
-  },
+// ── Core Activities (Most Engaging & Actionable) ──────────────────────────────
+const CORE_ACTIVITIES = [
   {
     emoji: '🫁',
     title: 'Breathe With Honeydew',
     description: 'Follow along for a calming breath',
     href: '/breathe-with-honeydew',
-    category: 'CALM',
-    available: true,
-  },
-  {
-    emoji: '◻️',
-    title: 'Box Breathing',
-    description: 'Find calm with Zummi',
-    href: '/box-breathing',
     category: 'CALM',
     available: true,
   },
@@ -42,11 +19,27 @@ const GAMES = [
     available: true,
   },
   {
-    emoji: '☁️',
-    title: 'Cloud Drift',
-    description: 'Let negative thoughts float away',
-    href: '/cloud-drift',
+    emoji: '🖌️',
+    title: 'Color Your World',
+    description: 'Bring a magical scene to life with color',
+    href: '/color-your-world',
+    category: 'CREATE',
+    available: true,
+  },
+  {
+    emoji: '◻️',
+    title: 'Box Breathing',
+    description: 'Find calm with Zummi',
+    href: '/box-breathing',
     category: 'CALM',
+    available: true,
+  },
+  {
+    emoji: '🌳',
+    title: 'Gratitude Tree',
+    description: 'Grow your tree with daily gratitude',
+    href: '/gratitude-tree',
+    category: 'GRATITUDE',
     available: true,
   },
   {
@@ -58,6 +51,26 @@ const GAMES = [
     available: true,
   },
   {
+    emoji: '☁️',
+    title: 'Cloud Drift',
+    description: 'Let negative thoughts float away',
+    href: '/cloud-drift',
+    category: 'CALM',
+    available: true,
+  },
+  {
+    emoji: '🌧',
+    title: 'Rain Drop Cleanse',
+    description: 'Release what no longer serves you',
+    href: '/rain-drop-cleanse',
+    category: 'RELEASE',
+    available: true,
+  },
+]
+
+// ── Secondary Activities (Playful & Exploratory) ───────────────────────────────
+const SECONDARY_ACTIVITIES = [
+  {
     emoji: '🎨',
     title: 'Creative Studio',
     description: 'Draw and create your world',
@@ -66,23 +79,7 @@ const GAMES = [
     available: true,
   },
   {
-    emoji: '🧘',
-    title: 'Clear My Mind',
-    description: 'Tap away thoughts and find peace',
-    href: '/clear-my-mind',
-    category: 'MINDFUL',
-    available: false,
-  },
-  {
-    emoji: '🖌️',
-    title: 'Color Your World',
-    description: 'Bring a magical scene to life with color',
-    href: '/color-your-world',
-    category: 'CREATE',
-    available: true,
-  },
-  {
-    emoji: '🎨',
+    emoji: '✏️',
     title: 'Sketch It',
     description: 'Draw freely and let your mind unwind',
     href: '/sketch-it',
@@ -90,14 +87,28 @@ const GAMES = [
     available: true,
   },
   {
-    emoji: '🌳',
-    title: 'Gratitude Tree',
-    description: 'Grow your tree with daily gratitude',
-    href: '/gratitude-tree',
-    category: 'GRATITUDE',
+    emoji: '🧱',
+    title: 'Brick Breaker',
+    description: 'Break through mental clutter',
+    href: '/brick-breaker',
+    category: 'CLARITY',
     available: true,
   },
 ]
+
+// ── Coming Soon (In Development) ───────────────────────────────────────────────
+const COMING_SOON = [
+  {
+    emoji: '🧘',
+    title: 'Clear My Mind',
+    description: 'Tap away thoughts and find peace',
+    href: '/clear-my-mind',
+    category: 'MINDFUL',
+    available: false,
+  },
+]
+
+const GAMES = [...CORE_ACTIVITIES, ...SECONDARY_ACTIVITIES, ...COMING_SOON]
 
 const COLORS = {
   honeydew: '#F0FFF0',
@@ -137,10 +148,20 @@ export default function Hub() {
           </div>
         </div>
 
-        {/* 2-Column Card Grid */}
-        <div className="grid grid-cols-2 gap-3" style={{ gridAutoRows: '192px' }}>
-          {GAMES.map((game) => (
-            game.available ? (
+        {/* Core Activities Section */}
+        <div className="mb-6">
+          <h2
+            className="text-[13px] font-semibold mb-3 px-1"
+            style={{
+              color: COLORS.deepOcean,
+              opacity: 0.5,
+              letterSpacing: '0.08em',
+            }}
+          >
+            CORE ACTIVITIES
+          </h2>
+          <div className="grid grid-cols-2 gap-3" style={{ gridAutoRows: '192px' }}>
+            {CORE_ACTIVITIES.map((game) => (
               <Link 
                 key={game.href} 
                 href={game.href}
@@ -148,13 +169,57 @@ export default function Hub() {
               >
                 <GameCard game={game} />
               </Link>
-            ) : (
-              <div key={game.href} className="opacity-50">
-                <GameCard game={game} disabled />
-              </div>
-            )
-          ))}
+            ))}
+          </div>
         </div>
+
+        {/* Secondary Activities Section */}
+        <div className="mb-6">
+          <h2
+            className="text-[13px] font-semibold mb-3 px-1"
+            style={{
+              color: COLORS.deepOcean,
+              opacity: 0.5,
+              letterSpacing: '0.08em',
+            }}
+          >
+            EXPLORE & PLAY
+          </h2>
+          <div className="grid grid-cols-2 gap-3" style={{ gridAutoRows: '192px' }}>
+            {SECONDARY_ACTIVITIES.map((game) => (
+              <Link 
+                key={game.href} 
+                href={game.href}
+                className="block active:scale-[0.97] transition-transform"
+              >
+                <GameCard game={game} />
+              </Link>
+            ))}
+          </div>
+        </div>
+
+        {/* Coming Soon Section */}
+        {COMING_SOON.length > 0 && (
+          <div className="mb-6">
+            <h2
+              className="text-[13px] font-semibold mb-3 px-1"
+              style={{
+                color: COLORS.deepOcean,
+                opacity: 0.5,
+                letterSpacing: '0.08em',
+              }}
+            >
+              COMING SOON
+            </h2>
+            <div className="grid grid-cols-2 gap-3" style={{ gridAutoRows: '192px' }}>
+              {COMING_SOON.map((game) => (
+                <div key={game.href} className="opacity-50">
+                  <GameCard game={game} disabled />
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
     </div>
   )
