@@ -95,11 +95,11 @@ export function BreathingExperience({ onComplete }: Props) {
     >
       {/* Phase instruction */}
       <div
-        className="absolute w-full text-center"
+        className="absolute left-0 right-0 flex justify-center"
         style={{ top: "14%", opacity: textAlpha, transition: "opacity 0.4s ease" }}
       >
         <h2
-          className="text-[32px] font-semibold"
+          className="text-[32px] font-semibold text-center"
           style={{ color: "#083F56", letterSpacing: "-0.02em" }}
         >
           {label}

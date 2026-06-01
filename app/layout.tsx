@@ -18,7 +18,6 @@ export const viewport: Viewport = {
   initialScale: 1,
   maximumScale: 1,
   userScalable: false,
-  viewportFit: 'cover', // Important for safe area insets
 }
 
 export default function RootLayout({

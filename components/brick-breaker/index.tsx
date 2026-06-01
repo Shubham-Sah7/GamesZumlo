@@ -50,8 +50,6 @@ export function BrickBreaker() {
       className="relative h-screen w-full overflow-hidden" 
       style={{ 
         backgroundColor: "#D4E8E0",
-        paddingTop: "env(safe-area-inset-top, 0px)",
-        paddingBottom: "env(safe-area-inset-bottom, 0px)",
       }}
     >
       {gameState === "welcome" && <WelcomeScreen onStart={handleStart} />}

@@ -26,6 +26,14 @@ const GAMES = [
     available: true,
   },
   {
+    emoji: '◻️',
+    title: 'Box Breathing',
+    description: 'Find calm with Zummi',
+    href: '/box-breathing',
+    category: 'CALM',
+    available: true,
+  },
+  {
     emoji: '☁️',
     title: 'Cloud Drift',
     description: 'Let negative thoughts float away',
@@ -42,10 +50,10 @@ const GAMES = [
     available: true,
   },
   {
-    emoji: '✨',
-    title: 'Firefly Catcher',
-    description: 'Collect moments of light',
-    href: '/firefly-catcher',
+    emoji: '🎨',
+    title: 'Creative Studio',
+    description: 'Draw and create your world',
+    href: '/creative-studio',
     category: 'FOCUS',
     available: true,
   },
@@ -56,6 +64,22 @@ const GAMES = [
     href: '/clear-my-mind',
     category: 'MINDFUL',
     available: false,
+  },
+  {
+    emoji: '🖌️',
+    title: 'Color Your World',
+    description: 'Bring a magical scene to life with color',
+    href: '/color-your-world',
+    category: 'CREATE',
+    available: true,
+  },
+  {
+    emoji: '🎨',
+    title: 'Sketch It',
+    description: 'Draw freely and let your mind unwind',
+    href: '/sketch-it',
+    category: 'CREATE',
+    available: true,
   },
   {
     emoji: '🌳',
@@ -83,10 +107,11 @@ export default function Hub() {
       style={{ 
         background: COLORS.honeydew,
         scrollbarWidth: 'none',
+        paddingTop: '20px',
         paddingBottom: '32px'
       } as React.CSSProperties}
     >
-      <div className="px-6 pt-8">
+      <div className="px-6 pt-4">
         {/* Greeting Section */}
         <div className="mb-8">
           <div className="flex items-start gap-3">
@@ -248,6 +273,7 @@ function getCategoryColor(category: string): string {
     MINDFUL: 'rgba(118, 100, 139, 0.2)',   // Lavender Fog
     GRATITUDE: 'rgba(245, 154, 74, 0.2)',  // Warm Sunset
     FOCUS: 'rgba(87, 169, 154, 0.25)',     // Calm Teal
+    CREATE: 'rgba(236, 72, 153, 0.18)',    // Pink
   }
   return colors[category] || 'rgba(184, 203, 190, 0.3)'
 }

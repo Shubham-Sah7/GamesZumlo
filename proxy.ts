@@ -27,11 +27,15 @@ const isPublicRoute = createRouteMatcher([
   '/rain-drop-cleanse(.*)',
   '/brick-breaker(.*)',
   '/breathe-with-honeydew(.*)',
+  '/box-breathing(.*)',
+  '/creative-studio(.*)',
   '/gratitude-tree(.*)',
   '/cloud-drift(.*)',
   '/lantern-release(.*)',
   '/firefly-catcher(.*)',
   '/clear-my-mind(.*)',
+  '/sketch-it(.*)',
+  '/color-your-world(.*)',
 ])
 
 const isDashboardRoute = createRouteMatcher(['/dashboard(.*)'])
