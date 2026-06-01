@@ -12,9 +12,10 @@ interface HoneydewWelcomeScreenProps {
   title: string
   description: string
   onStart: () => void
+  startLabel?: string
 }
 
-export function HoneydewWelcomeScreen({ title, description, onStart }: HoneydewWelcomeScreenProps) {
+export function HoneydewWelcomeScreen({ title, description, onStart, startLabel = 'Start' }: HoneydewWelcomeScreenProps) {
   return (
     <div
       className="h-full flex flex-col items-center justify-center px-8 animate-fade-in"
@@ -61,7 +62,7 @@ export function HoneydewWelcomeScreen({ title, description, onStart }: HoneydewW
           letterSpacing: '0.01em',
         }}
       >
-        Start
+        {startLabel}
       </button>
 
       <style jsx>{`

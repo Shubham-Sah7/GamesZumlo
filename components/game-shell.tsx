@@ -8,6 +8,7 @@ export interface GameConfig {
   title: string
   description: string
   completionMessage: string
+  startLabel?: string
 }
 
 interface GameShellProps {
@@ -25,6 +26,7 @@ export function GameShell({ config, renderGame }: GameShellProps) {
           title={config.title}
           description={config.description}
           onStart={() => setScreen('game')}
+          startLabel={config.startLabel}
         />
       )}
       {screen === 'game' && renderGame(() => setScreen('completion'))}

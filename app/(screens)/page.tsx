@@ -63,7 +63,7 @@ const GAMES = [
     description: 'Grow your tree with daily gratitude',
     href: '/gratitude-tree',
     category: 'GRATITUDE',
-    available: false,
+    available: true,
   },
 ]
 
