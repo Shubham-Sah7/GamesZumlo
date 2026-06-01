@@ -34,6 +34,14 @@ const GAMES = [
     available: true,
   },
   {
+    emoji: '✋',
+    title: 'Gentle Tap Journey',
+    description: 'Reconnect through mindful tapping',
+    href: '/gentle-tap-journey',
+    category: 'MINDFUL',
+    available: true,
+  },
+  {
     emoji: '☁️',
     title: 'Cloud Drift',
     description: 'Let negative thoughts float away',
