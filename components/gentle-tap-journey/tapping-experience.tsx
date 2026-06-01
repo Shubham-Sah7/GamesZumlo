@@ -1,57 +1,73 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
+import Image from 'next/image'
 
 const COLORS = {
   honeydew: '#F0FFF0',
   lavenderFog: '#76648B',
   deepOcean: '#083F56',
   calmTeal: '#57A99A',
+  purpleGlow: 'rgba(118, 100, 139, 0.6)',
+  purpleBright: '#9B7EBD',
+  orangeGlow: 'rgba(255, 159, 64, 0.8)',
 }
 
 interface TappingStep {
   id: string
-  area: string
   instruction: string
   taps: number
-  highlightY: number
+  areaY: number // percentage from top
+  areaX: number // percentage from left
+  areaWidth: number // percentage
+  areaHeight: number // percentage
 }
 
 const STEPS: TappingStep[] = [
   {
     id: 'forehead',
-    area: 'Forehead',
-    instruction: 'Gently tap your forehead',
+    instruction: 'Tap your forehead 3 times',
     taps: 3,
-    highlightY: 50,
+    areaY: 24,
+    areaX: 50,
+    areaWidth: 20,
+    areaHeight: 8,
   },
   {
     id: 'cheeks',
-    area: 'Cheeks',
-    instruction: 'Tap each cheek gently',
+    instruction: 'Tap your cheeks 4 times',
     taps: 4,
-    highlightY: 90,
+    areaY: 30,
+    areaX: 50,
+    areaWidth: 25,
+    areaHeight: 6,
   },
   {
     id: 'chest',
-    area: 'Upper Chest',
-    instruction: 'Place your hand and tap gently',
+    instruction: 'Tap your chest 3 times',
     taps: 3,
-    highlightY: 160,
+    areaY: 50,
+    areaX: 50,
+    areaWidth: 22,
+    areaHeight: 10,
   },
   {
     id: 'shoulders',
-    area: 'Shoulders',
-    instruction: 'Tap each shoulder',
+    instruction: 'Tap your shoulders 4 times',
     taps: 4,
-    highlightY: 140,
+    areaY: 40,
+    areaX: 50,
+    areaWidth: 35,
+    areaHeight: 8,
   },
   {
     id: 'hands',
-    area: 'Hands',
-    instruction: 'Give your hands gentle taps',
+    instruction: 'Tap your hands 3 times',
     taps: 3,
-    highlightY: 230,
+    areaY: 72,
+    areaX: 50,
+    areaWidth: 45,
+    areaHeight: 6,
   },
 ]
 
@@ -65,23 +81,21 @@ export function TappingExperience({ onComplete }: TappingExperienceProps) {
   const [showRipple, setShowRipple] = useState(false)
   const [showGlow, setShowGlow] = useState(false)
   const [isTransitioning, setIsTransitioning] = useState(false)
+  const [completedSteps, setCompletedSteps] = useState<Set<number>>(new Set())
 
   const step = STEPS[currentStep]
   const progress = ((currentStep + (tapsCompleted / step.taps)) / STEPS.length) * 100
   const isLastStep = currentStep === STEPS.length - 1
 
   const handleTap = () => {
-    // Prevent taps during transition
     if (isTransitioning) return
 
-    // Trigger visual feedback
     setShowRipple(true)
     setShowGlow(true)
     
-    setTimeout(() => setShowRipple(false), 600)
-    setTimeout(() => setShowGlow(false), 300)
+    setTimeout(() => setShowRipple(false), 800)
+    setTimeout(() => setShowGlow(false), 400)
 
-    // Haptic feedback
     if ('vibrate' in navigator) {
       navigator.vibrate(10)
     }
@@ -89,32 +103,31 @@ export function TappingExperience({ onComplete }: TappingExperienceProps) {
     const newTaps = tapsCompleted + 1
 
     if (newTaps >= step.taps) {
-      // Completed this step
       setIsTransitioning(true)
+      setCompletedSteps(prev => new Set([...prev, currentStep]))
       
       if (isLastStep) {
-        // Complete the entire journey
         setTimeout(() => {
           onComplete()
-        }, 800)
+        }, 1000)
       } else {
-        // Move to next step
         setTimeout(() => {
           setCurrentStep(currentStep + 1)
           setTapsCompleted(0)
           setIsTransitioning(false)
-        }, 800)
+        }, 1000)
       }
     } else {
-      // Continue tapping current step
       setTapsCompleted(newTaps)
     }
   }
 
   return (
     <div
-      className="relative h-full w-full flex flex-col"
-      style={{ background: COLORS.honeydew }}
+      className="relative h-full w-full flex flex-col overflow-hidden"
+      style={{
+        background: 'linear-gradient(180deg, #F0FFF0 0%, #E8F5E9 100%)',
+      }}
     >
       {/* Progress Bar */}
       <div
@@ -123,253 +136,220 @@ export function TappingExperience({ onComplete }: TappingExperienceProps) {
           top: 0,
           left: 0,
           right: 0,
-          height: '4px',
-          background: 'rgba(87, 169, 154, 0.2)',
-          zIndex: 10,
+          height: '3px',
+          background: 'rgba(118, 100, 139, 0.15)',
+          zIndex: 20,
         }}
       >
         <div
           style={{
             height: '100%',
             width: `${progress}%`,
-            background: COLORS.calmTeal,
-            transition: 'width 0.4s ease',
+            background: 'linear-gradient(90deg, #76648B 0%, #9B7EBD 100%)',
+            transition: 'width 0.6s cubic-bezier(0.4, 0, 0.2, 1)',
           }}
         />
       </div>
 
-      {/* Main Content */}
-      <div className="flex-1 flex flex-col items-center justify-center px-8 pt-8 pb-4">
-        {/* Character Illustration */}
-        <div className="relative mb-8" style={{ width: '200px', height: '300px' }}>
-          <svg
-            width="200"
-            height="300"
-            viewBox="0 0 200 300"
-            fill="none"
-            style={{ animation: 'gentle-breathe 4s ease-in-out infinite' }}
-          >
-            {/* Head */}
-            <ellipse
-              cx="100"
-              cy="50"
-              rx="45"
-              ry="50"
-              fill="#FFE4C4"
-              stroke={COLORS.deepOcean}
-              strokeWidth="2"
-            />
-
-            {/* Eyes - blinking */}
-            <g style={{ animation: 'blink 4s ease-in-out infinite' }}>
-              <circle cx="85" cy="45" r="4" fill={COLORS.deepOcean} />
-              <circle cx="115" cy="45" r="4" fill={COLORS.deepOcean} />
-            </g>
-
-            {/* Gentle smile */}
-            <path
-              d="M 85 60 Q 100 68 115 60"
-              stroke={COLORS.deepOcean}
-              strokeWidth="2"
-              fill="none"
-              strokeLinecap="round"
-            />
-
-            {/* Body */}
-            <ellipse
-              cx="100"
-              cy="160"
-              rx="55"
-              ry="70"
-              fill="#B8E6D5"
-              stroke={COLORS.deepOcean}
-              strokeWidth="2"
-            />
-
-            {/* Arms */}
-            <ellipse
-              cx="45"
-              cy="140"
-              rx="15"
-              ry="50"
-              fill="#B8E6D5"
-              stroke={COLORS.deepOcean}
-              strokeWidth="2"
-              transform="rotate(-20 45 140)"
-            />
-            <ellipse
-              cx="155"
-              cy="140"
-              rx="15"
-              ry="50"
-              fill="#B8E6D5"
-              stroke={COLORS.deepOcean}
-              strokeWidth="2"
-              transform="rotate(20 155 140)"
-            />
-
-            {/* Legs */}
-            <ellipse
-              cx="80"
-              cy="260"
-              rx="18"
-              ry="35"
-              fill="#B8E6D5"
-              stroke={COLORS.deepOcean}
-              strokeWidth="2"
-            />
-            <ellipse
-              cx="120"
-              cy="260"
-              rx="18"
-              ry="35"
-              fill="#B8E6D5"
-              stroke={COLORS.deepOcean}
-              strokeWidth="2"
-            />
-
-            {/* Highlight indicator - Glow */}
-            {showGlow && (
-              <circle
-                cx="100"
-                cy={step.highlightY}
-                r="35"
-                fill={COLORS.lavenderFog}
-                opacity="0.3"
-                style={{ animation: 'glow-pulse 0.3s ease-out' }}
-              />
-            )}
-
-            {/* Highlight indicator - Pulse ring */}
-            <circle
-              cx="100"
-              cy={step.highlightY}
-              r="30"
-              fill="none"
-              stroke={COLORS.lavenderFog}
-              strokeWidth="3"
-              opacity="0.6"
-              style={{
-                animation: showRipple ? 'ripple 0.6s ease-out' : 'pulse 2s ease-in-out infinite',
-              }}
-            />
-
-            {/* Highlight indicator - Inner circle */}
-            <circle
-              cx="100"
-              cy={step.highlightY}
-              r="20"
-              fill={COLORS.lavenderFog}
-              opacity="0.2"
-            />
-
-            {/* Ripple effect */}
-            {showRipple && (
-              <circle
-                cx="100"
-                cy={step.highlightY}
-                r="30"
-                fill="none"
-                stroke={COLORS.calmTeal}
-                strokeWidth="2"
-                opacity="0.8"
-                style={{ animation: 'ripple 0.6s ease-out' }}
-              />
-            )}
-          </svg>
-        </div>
-
-        {/* Step indicator */}
-        <div
-          className="text-[12px] font-semibold mb-2"
-          style={{
-            color: COLORS.calmTeal,
-            letterSpacing: '0.05em',
+      {/* Main Content - Body Image with Interaction Overlays */}
+      <div className="flex-1 flex flex-col items-center justify-center relative px-4">
+        {/* Body Silhouette Container */}
+        <div 
+          className="relative"
+          style={{ 
+            width: '100%',
+            maxWidth: '280px',
+            height: '75vh',
+            maxHeight: '650px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
           }}
         >
-          STEP {currentStep + 1} OF {STEPS.length}
+          {/* Actual Body Image */}
+          <div
+            className="relative w-full h-full"
+            style={{
+              animation: 'gentle-float 4s ease-in-out infinite',
+            }}
+          >
+            <Image
+              src="/body-silhouette.svg"
+              alt="Body silhouette"
+              fill
+              style={{
+                objectFit: 'contain',
+                filter: 'drop-shadow(0 4px 20px rgba(118, 100, 139, 0.15))',
+              }}
+              priority
+            />
+          </div>
+
+          {/* Active Area Glow Overlay */}
+          <div
+            style={{
+              position: 'absolute',
+              top: `${step.areaY}%`,
+              left: `${step.areaX}%`,
+              transform: 'translate(-50%, -50%)',
+              width: `${step.areaWidth}%`,
+              height: `${step.areaHeight}%`,
+              borderRadius: '50%',
+              background: showGlow
+                ? 'radial-gradient(circle, rgba(255, 159, 64, 0.9) 0%, rgba(155, 126, 189, 0.6) 50%, transparent 100%)'
+                : 'radial-gradient(circle, rgba(155, 126, 189, 0.7) 0%, rgba(118, 100, 139, 0.4) 50%, transparent 100%)',
+              animation: showGlow 
+                ? 'glow-burst 0.4s ease-out' 
+                : 'pulse-glow 2s ease-in-out infinite',
+              pointerEvents: 'none',
+              zIndex: 5,
+            }}
+          />
+
+          {/* Ripple Effects */}
+          {showRipple && (
+            <>
+              <div
+                style={{
+                  position: 'absolute',
+                  top: `${step.areaY}%`,
+                  left: `${step.areaX}%`,
+                  transform: 'translate(-50%, -50%)',
+                  width: `${step.areaWidth}%`,
+                  height: `${step.areaHeight}%`,
+                  borderRadius: '50%',
+                  border: '3px solid #FF9F40',
+                  opacity: 0.8,
+                  animation: 'ripple-expand 0.8s ease-out',
+                  pointerEvents: 'none',
+                  zIndex: 6,
+                }}
+              />
+              <div
+                style={{
+                  position: 'absolute',
+                  top: `${step.areaY}%`,
+                  left: `${step.areaX}%`,
+                  transform: 'translate(-50%, -50%)',
+                  width: `${step.areaWidth}%`,
+                  height: `${step.areaHeight}%`,
+                  borderRadius: '50%',
+                  border: '2px solid #9B7EBD',
+                  opacity: 0.6,
+                  animation: 'ripple-expand 0.8s ease-out 0.1s',
+                  pointerEvents: 'none',
+                  zIndex: 6,
+                }}
+              />
+            </>
+          )}
+
+          {/* Completed Steps Indicators */}
+          {Array.from(completedSteps).map((stepIndex) => {
+            const completedStep = STEPS[stepIndex]
+            return (
+              <div
+                key={stepIndex}
+                style={{
+                  position: 'absolute',
+                  top: `${completedStep.areaY}%`,
+                  left: `${completedStep.areaX}%`,
+                  transform: 'translate(-50%, -50%)',
+                  width: `${completedStep.areaWidth * 0.4}%`,
+                  height: `${completedStep.areaHeight * 0.4}%`,
+                  borderRadius: '50%',
+                  background: 'radial-gradient(circle, rgba(155, 126, 189, 0.8) 0%, transparent 70%)',
+                  pointerEvents: 'none',
+                  zIndex: 4,
+                }}
+              />
+            )
+          })}
+
+          {/* Invisible Tap Target Overlay */}
+          <div
+            onClick={handleTap}
+            style={{
+              position: 'absolute',
+              top: `${step.areaY}%`,
+              left: `${step.areaX}%`,
+              transform: 'translate(-50%, -50%)',
+              width: `${step.areaWidth + 10}%`,
+              height: `${step.areaHeight + 10}%`,
+              cursor: isTransitioning ? 'not-allowed' : 'pointer',
+              zIndex: 10,
+              // Debug: uncomment to see tap zones
+              // background: 'rgba(255, 0, 0, 0.2)',
+              // border: '2px solid red',
+            }}
+          />
         </div>
 
-        {/* Instruction */}
-        <div className="text-center mb-2">
-          <h2
-            className="text-[24px] font-medium mb-1"
-            style={{ color: COLORS.deepOcean, letterSpacing: '-0.01em' }}
+        {/* Instruction - Minimal & Elegant */}
+        <div
+          className="absolute bottom-24 left-0 right-0 text-center px-8"
+          style={{
+            animation: 'fade-slide-up 0.6s ease-out',
+          }}
+        >
+          <p
+            className="text-[18px] font-medium mb-3"
+            style={{
+              color: COLORS.deepOcean,
+              letterSpacing: '-0.01em',
+              lineHeight: '1.4',
+            }}
           >
             {step.instruction}
-          </h2>
-          <p
-            className="text-[14px]"
-            style={{ color: COLORS.lavenderFog, opacity: 0.8 }}
-          >
-            {tapsCompleted} / {step.taps} taps
           </p>
-        </div>
 
-        {/* Tap counter dots */}
-        <div className="flex gap-2 mb-8">
-          {Array.from({ length: step.taps }).map((_, i) => (
-            <div
-              key={i}
-              style={{
-                width: '12px',
-                height: '12px',
-                borderRadius: '50%',
-                background: i < tapsCompleted ? COLORS.calmTeal : 'rgba(87, 169, 154, 0.2)',
-                transition: 'background 0.3s ease',
-              }}
-            />
-          ))}
+          {/* Tap Dots */}
+          <div className="flex justify-center gap-2">
+            {Array.from({ length: step.taps }).map((_, i) => (
+              <div
+                key={i}
+                style={{
+                  width: '10px',
+                  height: '10px',
+                  borderRadius: '50%',
+                  background: i < tapsCompleted 
+                    ? 'linear-gradient(135deg, #FF9F40 0%, #FFA726 100%)'
+                    : 'rgba(118, 100, 139, 0.2)',
+                  transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                  transform: i < tapsCompleted ? 'scale(1.2)' : 'scale(1)',
+                  boxShadow: i < tapsCompleted ? '0 2px 8px rgba(255, 159, 64, 0.4)' : 'none',
+                }}
+              />
+            ))}
+          </div>
         </div>
-
-        {/* Tap Button */}
-        <button
-          onClick={handleTap}
-          disabled={isTransitioning}
-          className="transition-all active:scale-95"
-          style={{
-            width: '140px',
-            height: '140px',
-            borderRadius: '50%',
-            background: isTransitioning ? 'rgba(118, 100, 139, 0.5)' : COLORS.lavenderFog,
-            color: '#FFFFFF',
-            fontSize: '18px',
-            fontWeight: 600,
-            border: 'none',
-            cursor: isTransitioning ? 'not-allowed' : 'pointer',
-            boxShadow: isTransitioning ? 'none' : '0 8px 24px rgba(118, 100, 139, 0.3)',
-            opacity: isTransitioning ? 0.5 : 1,
-          }}
-        >
-          {isTransitioning ? 'Next...' : 'Tap'}
-        </button>
       </div>
 
       <style jsx>{`
-        @keyframes gentle-breathe {
-          0%, 100% { transform: scale(1); }
-          50% { transform: scale(1.02); }
+        @keyframes gentle-float {
+          0%, 100% { transform: translateY(0px); }
+          50% { transform: translateY(-8px); }
         }
 
-        @keyframes blink {
-          0%, 48%, 52%, 100% { transform: scaleY(1); }
-          50% { transform: scaleY(0.1); }
+        @keyframes pulse-glow {
+          0%, 100% { opacity: 0.4; transform: scale(1); }
+          50% { opacity: 0.8; transform: scale(1.1); }
         }
 
-        @keyframes pulse {
-          0%, 100% { transform: scale(1); opacity: 0.6; }
-          50% { transform: scale(1.15); opacity: 0.8; }
+        @keyframes glow-burst {
+          0% { opacity: 0.3; transform: scale(0.8); }
+          50% { opacity: 1; transform: scale(1.2); }
+          100% { opacity: 0.7; transform: scale(1); }
         }
 
-        @keyframes ripple {
-          0% { transform: scale(1); opacity: 0.8; }
-          100% { transform: scale(2.5); opacity: 0; }
+        @keyframes ripple-expand {
+          0% { opacity: 0.8; transform: translate(-50%, -50%) scale(1); }
+          100% { opacity: 0; transform: translate(-50%, -50%) scale(2.5); }
         }
 
-        @keyframes glow-pulse {
-          0% { transform: scale(0.8); opacity: 0; }
-          50% { transform: scale(1.2); opacity: 0.4; }
-          100% { transform: scale(1); opacity: 0.3; }
+        @keyframes fade-slide-up {
+          0% { opacity: 0; transform: translateY(20px); }
+          100% { opacity: 1; transform: translateY(0); }
         }
       `}</style>
     </div>

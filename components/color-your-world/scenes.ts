@@ -1,12 +1,30 @@
-// SVG path helpers
-const r = (x: number, y: number, w: number, h: number) =>
-  `M${x},${y}h${w}v${h}h${-w}Z`
+// SVG path helpers for premium coloring book illustrations
+const r = (x: number, y: number, w: number, h: number, rx = 0) =>
+  rx > 0 
+    ? `M${x+rx},${y}h${w-2*rx}a${rx},${rx}0,0,1,${rx},${rx}v${h-2*rx}a${rx},${rx}0,0,1,${-rx},${rx}h${-(w-2*rx)}a${rx},${rx}0,0,1,${-rx},${-rx}v${-(h-2*rx)}a${rx},${rx}0,0,1,${rx},${-rx}Z`
+    : `M${x},${y}h${w}v${h}h${-w}Z`
 const c = (cx: number, cy: number, rad: number) =>
   `M${cx + rad},${cy}A${rad},${rad}0,1,1,${cx - rad},${cy}A${rad},${rad}0,1,1,${cx + rad},${cy}Z`
 const e = (cx: number, cy: number, rx: number, ry: number) =>
   `M${cx + rx},${cy}A${rx},${ry}0,1,1,${cx - rx},${cy}A${rx},${ry}0,1,1,${cx + rx},${cy}Z`
 const t = (x1: number, y1: number, x2: number, y2: number, x3: number, y3: number) =>
   `M${x1},${y1}L${x2},${y2}L${x3},${y3}Z`
+
+// Premium petal shape (smooth, organic)
+const petal = (cx: number, cy: number, size: number, rotation: number) => {
+  const rad = (rotation * Math.PI) / 180
+  const cos = Math.cos(rad), sin = Math.sin(rad)
+  const x1 = cx + size * cos, y1 = cy + size * sin
+  const x2 = cx - size * cos, y2 = cy - size * sin
+  const ctrl = size * 0.6
+  return `M${cx},${cy}Q${x1 + ctrl * sin},${y1 - ctrl * cos},${x1},${y1}Q${x1 - ctrl * sin},${y1 + ctrl * cos},${cx},${cy}Q${x2 + ctrl * sin},${y2 - ctrl * cos},${x2},${y2}Q${x2 - ctrl * sin},${y2 + ctrl * cos},${cx},${cy}Z`
+}
+
+// Smooth leaf shape
+const leaf = (x: number, y: number, w: number, h: number, flip = false) => {
+  const dir = flip ? -1 : 1
+  return `M${x},${y}Q${x + dir * w * 0.7},${y + h * 0.3},${x + dir * w},${y + h * 0.5}Q${x + dir * w * 0.7},${y + h * 0.7},${x},${y + h}Q${x + dir * w * 0.3},${y + h * 0.5},${x},${y}Z`
+}
 
 export interface Region {
   id:           string
@@ -29,197 +47,248 @@ export interface Scene {
   decorations: Array<{ d: string; stroke: string; strokeWidth?: number }> // non-interactive overlays
 }
 
-// ─── SCENE 1: Moonlight Village ──────────────────────────────────────────────
-const moonlightVillage: Scene = {
-  id: 'moonlight-village',
-  name: 'Moonlight Village',
-  emoji: '🌙',
-  mood: 'cozy & dreamy',
-  viewBox: '0 0 400 480',
-  background: '#1a2744',
+// ─── SCENE 2: Cozy Room (Premium Quality) ─────────────────────────────────────
+const cozyRoom: Scene = {
+  id: 'cozy-room',
+  name: 'Cozy Room',
+  emoji: '🏠',
+  mood: 'warm & peaceful',
+  viewBox: '0 0 400 500',
+  background: '#FFF8E1',
   regions: [
-    // Sky & Ground
-    { id: 'sky',    d: r(0,0,400,280),    label: 'Night sky',   fill: '#e8eaf6' },
-    { id: 'ground', d: r(0,280,400,200),  label: 'Ground',      fill: '#e8f5e9' },
-    { id: 'road',   d: 'M150,480Q175,375,200,342L250,342Q268,372,260,480Z', label: 'Road', fill: '#f5f5f5' },
-
-    // Moon + craters
-    { id: 'moon',    d: c(325,65,42),    label: 'Moon',         fill: '#fff9c4' },
-    { id: 'mc1',     d: e(310,54,9,6),   label: 'Moon crater',  fill: '#f5e6a3', strokeWidth: 0.8 },
-    { id: 'mc2',     d: e(338,78,7,4),   label: 'Moon crater',  fill: '#f5e6a3', strokeWidth: 0.8 },
-
-    // Stars
-    { id: 'st1', d: c(50,32,4),    label: 'Star', fill: '#fff9c4' },
-    { id: 'st2', d: c(95,20,4.5),  label: 'Star', fill: '#fff9c4' },
-    { id: 'st3', d: c(155,46,3.5), label: 'Star', fill: '#fff9c4' },
-    { id: 'st4', d: c(212,29,4),   label: 'Star', fill: '#fff9c4' },
-    { id: 'st5', d: c(258,50,3),   label: 'Star', fill: '#fff9c4' },
-    { id: 'st6', d: c(82,144,3),   label: 'Star', fill: '#fff9c4' },
-    { id: 'st7', d: c(186,122,3.5),label: 'Star', fill: '#fff9c4' },
-
-    // Clouds
-    { id: 'cl1', d: 'M35,115Q42,96,65,98Q76,82,100,92Q115,82,120,98Q130,98,125,116Q110,126,80,126Q50,124,35,115Z', label: 'Cloud', fill: '#fafafa' },
-    { id: 'cl2', d: 'M168,90Q175,72,200,74Q212,60,230,70Q242,66,240,82Q244,94,230,98Q210,102,192,100Q165,100,168,90Z', label: 'Cloud', fill: '#fafafa' },
-
-    // House 1 (left)
-    { id: 'h1_body',  d: r(18,222,90,78),    label: 'House wall',    fill: '#fafafa' },
-    { id: 'h1_roof',  d: t(5,222,63,157,120,222), label: 'Roof',     fill: '#fafafa' },
-    { id: 'h1_door',  d: r(50,263,24,37),    label: 'Door',          fill: '#fafafa' },
-    { id: 'h1_win_l', d: r(24,240,26,23),    label: 'Window',        fill: '#fafafa' },
-    { id: 'h1_win_r', d: r(72,240,26,23),    label: 'Window',        fill: '#fafafa' },
-    { id: 'h1_chim',  d: r(86,170,12,48),    label: 'Chimney',       fill: '#fafafa' },
-    // Cat on roof 1
-    { id: 'cat_body', d: e(58,163,12,7),     label: 'Cat body',      fill: '#fafafa' },
-    { id: 'cat_head', d: c(70,153,8),         label: 'Cat head',      fill: '#fafafa' },
-    { id: 'cat_el',   d: t(65,147,70,139,75,146), label: 'Cat ear',  fill: '#fafafa' },
-    { id: 'cat_er',   d: t(72,146,77,138,82,145), label: 'Cat ear',  fill: '#fafafa' },
-
-    // House 2 (center, tallest)
-    { id: 'h2_body',  d: r(143,180,118,130), label: 'House wall',    fill: '#fafafa' },
-    { id: 'h2_roof',  d: t(130,180,202,112,274,180), label: 'Roof',  fill: '#fafafa' },
-    { id: 'h2_door',  d: r(185,255,34,55),   label: 'Door',          fill: '#fafafa' },
-    { id: 'h2_wl',    d: r(153,206,32,30),   label: 'Window',        fill: '#fafafa' },
-    { id: 'h2_wr',    d: r(219,206,32,30),   label: 'Window',        fill: '#fafafa' },
-    { id: 'h2_attic', d: r(190,132,24,24),   label: 'Attic window',  fill: '#fafafa' },
-    { id: 'h2_chim',  d: r(250,138,14,38),   label: 'Chimney',       fill: '#fafafa' },
-
-    // House 3 (right)
-    { id: 'h3_body', d: r(295,226,88,74),    label: 'House wall',    fill: '#fafafa' },
-    { id: 'h3_roof', d: t(283,226,339,172,394,226), label: 'Roof',  fill: '#fafafa' },
-    { id: 'h3_door', d: r(323,263,22,37),    label: 'Door',          fill: '#fafafa' },
-    { id: 'h3_win',  d: r(303,246,24,21),    label: 'Window',        fill: '#fafafa' },
-    { id: 'h3_chim', d: r(360,182,12,40),    label: 'Chimney',       fill: '#fafafa' },
-
-    // Trees
-    { id: 'tr1t', d: r(120,287,10,17),  label: 'Tree trunk', fill: '#fafafa' },
-    { id: 'tr1c', d: c(125,269,21),      label: 'Tree crown', fill: '#fafafa' },
-    { id: 'tr2t', d: r(267,291,10,17),  label: 'Tree trunk', fill: '#fafafa' },
-    { id: 'tr2c', d: c(272,273,19),      label: 'Tree crown', fill: '#fafafa' },
-    { id: 'tr3t', d: r(380,284,10,16),  label: 'Tree trunk', fill: '#fafafa' },
-    { id: 'tr3c', d: c(385,268,20),      label: 'Tree crown', fill: '#fafafa' },
-
-    // Flowers
-    { id: 'fp1', d: e(55,344,5,10),  label: 'Petal', fill: '#fafafa' },
-    { id: 'fp2', d: e(65,354,10,5),  label: 'Petal', fill: '#fafafa' },
-    { id: 'fp3', d: e(55,364,5,8),   label: 'Petal', fill: '#fafafa' },
-    { id: 'fp4', d: e(45,354,8,5),   label: 'Petal', fill: '#fafafa' },
-    { id: 'fc',  d: c(55,354,7),      label: 'Flower center', fill: '#fafafa' },
-    { id: 'gp1', d: e(360,346,5,10), label: 'Petal', fill: '#fafafa' },
-    { id: 'gp2', d: e(370,356,10,5), label: 'Petal', fill: '#fafafa' },
-    { id: 'gp3', d: e(360,366,5,8),  label: 'Petal', fill: '#fafafa' },
-    { id: 'gp4', d: e(350,356,8,5),  label: 'Petal', fill: '#fafafa' },
-    { id: 'gc',  d: c(360,356,7),     label: 'Flower center', fill: '#fafafa' },
-
-    // Lanterns & pond
-    { id: 'lan1',  d: r(14,285,9,14),    label: 'Lantern', fill: '#fafafa' },
-    { id: 'lan2',  d: r(377,288,9,12),   label: 'Lantern', fill: '#fafafa' },
-    { id: 'pond',  d: e(320,412,46,18),  label: 'Pond',    fill: '#fafafa' },
+    // Back wall
+    { id: 'wall', d: r(0, 0, 400, 380), label: 'Wall', fill: '#FFECB3' },
+    
+    // Floor
+    { id: 'floor', d: r(0, 380, 400, 120), label: 'Floor', fill: '#D7CCC8' },
+    
+    // Window - large, clear
+    { id: 'window_frame', d: r(250, 40, 130, 140, 5), label: 'Window frame', fill: '#90CAF9' },
+    { id: 'window_glass', d: r(260, 50, 110, 120), label: 'Window glass', fill: '#E3F2FD' },
+    { id: 'window_div_v', d: r(312, 50, 6, 120), label: 'Window divider', fill: '#90CAF9' },
+    { id: 'window_div_h', d: r(260, 107, 110, 6), label: 'Window divider', fill: '#90CAF9' },
+    
+    // Curtain left
+    { id: 'curtain_l', d: `M240,40Q235,50,238,100Q240,150,235,180L245,180Q248,150,245,100Q248,50,240,40Z`, label: 'Curtain', fill: '#F48FB1' },
+    // Curtain right
+    { id: 'curtain_r', d: `M390,40Q395,50,392,100Q390,150,395,180L385,180Q382,150,385,100Q382,50,390,40Z`, label: 'Curtain', fill: '#F48FB1' },
+    
+    // Bookshelf
+    { id: 'shelf_frame', d: r(20, 80, 100, 180, 3), label: 'Bookshelf', fill: '#8D6E63' },
+    { id: 'shelf1', d: r(25, 130, 90, 4), label: 'Shelf', fill: '#6D4C41' },
+    { id: 'shelf2', d: r(25, 180, 90, 4), label: 'Shelf', fill: '#6D4C41' },
+    { id: 'shelf3', d: r(25, 230, 90, 4), label: 'Shelf', fill: '#6D4C41' },
+    
+    // Books - clear rectangles
+    { id: 'book1', d: r(30, 90, 15, 35), label: 'Book', fill: '#EF5350' },
+    { id: 'book2', d: r(48, 90, 12, 35), label: 'Book', fill: '#42A5F5' },
+    { id: 'book3', d: r(63, 95, 18, 30), label: 'Book', fill: '#66BB6A' },
+    { id: 'book4', d: r(84, 92, 14, 33), label: 'Book', fill: '#FFA726' },
+    { id: 'book5', d: r(30, 140, 16, 35), label: 'Book', fill: '#AB47BC' },
+    { id: 'book6', d: r(49, 138, 13, 37), label: 'Book', fill: '#FFEE58' },
+    { id: 'book7', d: r(65, 142, 17, 33), label: 'Book', fill: '#26C6DA' },
+    { id: 'book8', d: r(85, 140, 15, 35), label: 'Book', fill: '#EC407A' },
+    { id: 'book9', d: r(30, 190, 14, 35), label: 'Book', fill: '#5C6BC0' },
+    { id: 'book10', d: r(47, 192, 16, 33), label: 'Book', fill: '#FF7043' },
+    { id: 'book11', d: r(66, 188, 13, 37), label: 'Book', fill: '#9CCC65' },
+    { id: 'book12', d: r(82, 190, 18, 35), label: 'Book', fill: '#29B6F6' },
+    
+    // Plant pot on shelf
+    { id: 'pot1', d: `M35,240L45,255L55,255L65,240Z`, label: 'Plant pot', fill: '#FF7043' },
+    { id: 'plant1_l1', d: leaf(45, 225, 8, 15, true), label: 'Plant leaf', fill: '#66BB6A' },
+    { id: 'plant1_l2', d: leaf(50, 220, 10, 18, false), label: 'Plant leaf', fill: '#66BB6A' },
+    { id: 'plant1_l3', d: leaf(55, 225, 8, 15, false), label: 'Plant leaf', fill: '#66BB6A' },
+    
+    // Sofa - large, comfortable
+    { id: 'sofa_back', d: r(140, 300, 180, 60, 8), label: 'Sofa back', fill: '#7986CB' },
+    { id: 'sofa_seat', d: r(140, 350, 180, 30, 5), label: 'Sofa seat', fill: '#5C6BC0' },
+    { id: 'sofa_arm_l', d: r(130, 310, 20, 70, 5), label: 'Sofa arm', fill: '#7986CB' },
+    { id: 'sofa_arm_r', d: r(310, 310, 20, 70, 5), label: 'Sofa arm', fill: '#7986CB' },
+    
+    // Cushions on sofa
+    { id: 'cushion1', d: r(160, 315, 35, 35, 5), label: 'Cushion', fill: '#F48FB1' },
+    { id: 'cushion2', d: r(265, 315, 35, 35, 5), label: 'Cushion', fill: '#FFD54F' },
+    
+    // Coffee table
+    { id: 'table_top', d: r(160, 400, 120, 15, 3), label: 'Table top', fill: '#A1887F' },
+    { id: 'table_leg1', d: r(170, 415, 8, 35), label: 'Table leg', fill: '#8D6E63' },
+    { id: 'table_leg2', d: r(262, 415, 8, 35), label: 'Table leg', fill: '#8D6E63' },
+    
+    // Items on table
+    { id: 'mug', d: r(185, 385, 20, 15, 3), label: 'Mug', fill: '#EF5350' },
+    { id: 'mug_handle', d: `M205,390Q215,390,215,395Q215,400,205,400Z`, label: 'Mug handle', fill: '#EF5350' },
+    { id: 'book_table', d: r(220, 390, 40, 15, 2), label: 'Book', fill: '#42A5F5' },
+    
+    // Floor lamp
+    { id: 'lamp_base', d: c(360, 480, 20), label: 'Lamp base', fill: '#8D6E63' },
+    { id: 'lamp_pole', d: r(357, 280, 6, 200), label: 'Lamp pole', fill: '#6D4C41' },
+    { id: 'lamp_shade', d: `M330,250L360,280L390,250Z`, label: 'Lamp shade', fill: '#FFF59D' },
+    
+    // Large potted plant
+    { id: 'big_pot', d: `M50,420L70,460L90,460L110,420Z`, label: 'Plant pot', fill: '#FF7043' },
+    { id: 'plant2_l1', d: leaf(60, 380, 15, 40, true), label: 'Plant leaf', fill: '#66BB6A' },
+    { id: 'plant2_l2', d: leaf(70, 370, 18, 50, false), label: 'Plant leaf', fill: '#66BB6A' },
+    { id: 'plant2_l3', d: leaf(85, 375, 16, 45, false), label: 'Plant leaf', fill: '#66BB6A' },
+    { id: 'plant2_l4', d: leaf(75, 385, 14, 35, true), label: 'Plant leaf', fill: '#66BB6A' },
+    
+    // Rug
+    { id: 'rug', d: e(230, 450, 80, 35), label: 'Rug', fill: '#FFAB91' },
+    
+    // Wall art/picture frame
+    { id: 'frame', d: r(150, 100, 70, 90, 3), label: 'Picture frame', fill: '#8D6E63' },
+    { id: 'picture', d: r(158, 108, 54, 74), label: 'Picture', fill: '#FFE082' },
+    // Simple mountain scene in picture
+    { id: 'pic_sky', d: r(158, 108, 54, 40), label: 'Sky in picture', fill: '#81D4FA' },
+    { id: 'pic_mountain', d: `M158,148L185,120L212,148Z`, label: 'Mountain', fill: '#A1887F' },
   ],
   decorations: [
-    // Window panes
-    { d: 'M37,251h13M30,244v16M85,251h13M78,244v16M166,221h19M159,215v22M232,221h19M225,215v22M315,256h12M308,249v15', stroke: '#ccc', strokeWidth: 1 },
-    // Smoke from chimneys
-    { d: 'M92,168Q96,158,92,148 M255,136Q260,126,255,116 M364,180Q368,170,364,160', stroke: '#ddd', strokeWidth: 1.5 },
-    // Cat tail
-    { d: 'M46,168Q32,175,30,168Q34,162,46,163', stroke: '#888', strokeWidth: 1.5 },
-    // Door knobs
-    { d: 'M71,283a2,2,0,1,1-0.01,0 M218,289a2,2,0,1,1-0.01,0 M342,281a2,2,0,1,1-0.01,0', stroke: '#aaa', strokeWidth: 1 },
+    // Book spines
+    { d: 'M37,100v25 M55,105v20 M70,100v25 M91,98v27 M37,150v25 M56,148v27 M72,152v23 M92,150v25 M37,200v25 M55,202v23 M73,198v27 M89,200v25', stroke: '#FFFFFF', strokeWidth: 1 },
+    // Window view (clouds)
+    { d: 'M270,70Q275,65,285,70Q290,65,295,70 M320,90Q325,85,335,90Q340,85,345,90', stroke: '#90CAF9', strokeWidth: 1.5 },
+    // Sofa buttons
+    { d: 'M170,330a3,3,0,1,1-0.01,0 M290,330a3,3,0,1,1-0.01,0', stroke: '#3F51B5', strokeWidth: 1 },
+    // Mug steam
+    { d: 'M190,380Q188,370,190,365 M198,380Q196,370,198,365', stroke: '#BDBDBD', strokeWidth: 1 },
+    // Rug pattern
+    { d: 'M160,445h140 M160,455h140', stroke: '#FF8A65', strokeWidth: 1 },
   ],
 }
 
-// ─── SCENE 2: Enchanted Garden ────────────────────────────────────────────────
+// ─── SCENE 1: Enchanted Garden (Premium Quality) ──────────────────────────────
 const enchantedGarden: Scene = {
   id: 'enchanted-garden',
   name: 'Enchanted Garden',
   emoji: '🌸',
   mood: 'magical & peaceful',
-  viewBox: '0 0 400 480',
+  viewBox: '0 0 400 500',
   background: '#fffde7',
   regions: [
-    // Sky & ground
-    { id: 'sky',    d: r(0,0,400,210),   label: 'Sky',     fill: '#fafafa' },
-    { id: 'hills',  d: 'M0,210Q80,165,160,192Q240,165,320,185Q370,172,400,188V310H0Z', label: 'Hills', fill: '#fafafa' },
-    { id: 'ground', d: r(0,310,400,170), label: 'Ground',  fill: '#fafafa' },
-
-    // Sun
-    { id: 'sun', d: c(62,60,36), label: 'Sun', fill: '#fafafa' },
-    { id: 'sun_ray1', d: e(62,14,5,10), label: 'Sun ray', fill: '#fafafa' },
-    { id: 'sun_ray2', d: e(108,34,10,5),label: 'Sun ray', fill: '#fafafa' },
-    { id: 'sun_ray3', d: e(14,34,10,5), label: 'Sun ray', fill: '#fafafa' },
-
-    // Clouds
-    { id: 'cla', d: 'M130,52Q138,34,158,36Q168,22,185,32Q195,28,196,44Q198,58,185,62Q162,66,145,64Q128,62,130,52Z', label: 'Cloud', fill: '#fafafa' },
-    { id: 'clb', d: 'M258,78Q265,60,285,62Q295,48,312,58Q322,54,322,70Q326,82,312,86Q290,92,272,90Q256,88,258,78Z', label: 'Cloud', fill: '#fafafa' },
-
-    // FLOWER 1 (large, left — pink)
-    { id: 'f1_stem', d: r(80,282,8,88),  label: 'Flower stem', fill: '#fafafa' },
-    { id: 'f1_ll',   d: 'M88,348Q120,330,112,312Q92,326,88,348Z', label: 'Leaf', fill: '#fafafa' },
-    { id: 'f1_lr',   d: 'M80,342Q48,322,56,305Q76,318,80,342Z',    label: 'Leaf', fill: '#fafafa' },
-    { id: 'f1_pt',   d: e(84,260,11,18), label: 'Petal', fill: '#fafafa' },
-    { id: 'f1_pr',   d: e(102,277,18,11),label: 'Petal', fill: '#fafafa' },
-    { id: 'f1_pb',   d: e(84,294,11,15), label: 'Petal', fill: '#fafafa' },
-    { id: 'f1_pl',   d: e(66,277,18,11), label: 'Petal', fill: '#fafafa' },
-    { id: 'f1_c',    d: c(84,277,14),     label: 'Flower center', fill: '#fafafa' },
-
-    // FLOWER 2 (large, center — purple)
-    { id: 'f2_stem', d: r(210,262,8,98), label: 'Flower stem', fill: '#fafafa' },
-    { id: 'f2_ll',   d: 'M218,338Q248,318,240,300Q222,314,218,338Z', label: 'Leaf', fill: '#fafafa' },
-    { id: 'f2_lr',   d: 'M210,332Q178,312,186,295Q206,308,210,332Z', label: 'Leaf', fill: '#fafafa' },
-    { id: 'f2_pt',   d: e(214,242,11,18),label: 'Petal', fill: '#fafafa' },
-    { id: 'f2_pr',   d: e(232,259,18,11),label: 'Petal', fill: '#fafafa' },
-    { id: 'f2_pb',   d: e(214,276,11,15),label: 'Petal', fill: '#fafafa' },
-    { id: 'f2_pl',   d: e(196,259,18,11),label: 'Petal', fill: '#fafafa' },
-    { id: 'f2_c',    d: c(214,259,14),    label: 'Flower center', fill: '#fafafa' },
-
-    // FLOWER 3 (large, right — yellow)
-    { id: 'f3_stem', d: r(332,278,8,92), label: 'Flower stem', fill: '#fafafa' },
-    { id: 'f3_ll',   d: 'M340,355Q370,335,362,318Q344,330,340,355Z', label: 'Leaf', fill: '#fafafa' },
-    { id: 'f3_lr',   d: 'M332,348Q300,328,308,312Q328,324,332,348Z', label: 'Leaf', fill: '#fafafa' },
-    { id: 'f3_pt',   d: e(336,258,11,18),label: 'Petal', fill: '#fafafa' },
-    { id: 'f3_pr',   d: e(354,275,18,11),label: 'Petal', fill: '#fafafa' },
-    { id: 'f3_pb',   d: e(336,292,11,15),label: 'Petal', fill: '#fafafa' },
-    { id: 'f3_pl',   d: e(318,275,18,11),label: 'Petal', fill: '#fafafa' },
-    { id: 'f3_c',    d: c(336,275,14),    label: 'Flower center', fill: '#fafafa' },
-
-    // Big mushrooms
-    { id: 'm1_cap',  d: 'M130,352Q118,322,136,308Q154,296,170,308Q182,322,172,352Z', label: 'Mushroom cap', fill: '#fafafa' },
-    { id: 'm1_stem', d: r(140,352,24,26), label: 'Mushroom stem', fill: '#fafafa' },
-    { id: 'm1_s1',   d: c(148,328,5),     label: 'Spot',          fill: '#fafafa' },
-    { id: 'm1_s2',   d: c(163,318,4.5),   label: 'Spot',          fill: '#fafafa' },
-    { id: 'm2_cap',  d: 'M280,346Q270,320,286,308Q300,298,314,308Q324,320,314,346Z', label: 'Mushroom cap', fill: '#fafafa' },
-    { id: 'm2_stem', d: r(288,346,20,22), label: 'Mushroom stem', fill: '#fafafa' },
-    { id: 'm2_s1',   d: c(295,326,4),     label: 'Spot',          fill: '#fafafa' },
-
-    // Butterfly
-    { id: 'bf_body', d: e(187,200,4,13),  label: 'Butterfly body',      fill: '#fafafa' },
-    { id: 'bf_wlt',  d: 'M183,195Q148,178,150,208Q160,220,183,213Z',    label: 'Wing',  fill: '#fafafa' },
-    { id: 'bf_wlb',  d: 'M183,213Q154,218,157,240Q170,250,183,236Z',    label: 'Wing',  fill: '#fafafa' },
-    { id: 'bf_wrt',  d: 'M191,195Q226,178,224,208Q214,220,191,213Z',    label: 'Wing',  fill: '#fafafa' },
-    { id: 'bf_wrb',  d: 'M191,213Q220,218,217,240Q204,250,191,236Z',    label: 'Wing',  fill: '#fafafa' },
-
-    // Pond & lily pad
-    { id: 'pond',  d: e(220,422,62,22),  label: 'Pond',      fill: '#fafafa' },
-    { id: 'lily1', d: c(212,418,11),      label: 'Lily pad',  fill: '#fafafa' },
-    { id: 'lily2', d: c(235,426,9),       label: 'Lily pad',  fill: '#fafafa' },
-    { id: 'lily_fl', d: c(212,412,5),     label: 'Lily flower', fill: '#fafafa' },
-
-    // Small ground flowers
-    { id: 'gf1', d: c(42,388,8),  label: 'Flower', fill: '#fafafa' },
-    { id: 'gf2', d: c(28,368,6),  label: 'Flower', fill: '#fafafa' },
-    { id: 'gf3', d: c(372,378,8), label: 'Flower', fill: '#fafafa' },
-    { id: 'gf4', d: c(388,358,6), label: 'Flower', fill: '#fafafa' },
-    { id: 'gf5', d: c(168,438,7), label: 'Flower', fill: '#fafafa' },
-    { id: 'gf6', d: c(300,445,7), label: 'Flower', fill: '#fafafa' },
+    // Sky - clean gradient area
+    { id: 'sky', d: r(0, 0, 400, 200), label: 'Sky', fill: '#E3F2FD' },
+    
+    // Sun - large, clear circle
+    { id: 'sun', d: c(80, 60, 35), label: 'Sun', fill: '#FFF9C4' },
+    
+    // Sun rays - 8 clear triangular rays
+    { id: 'ray1', d: `M80,20L75,10L85,10Z`, label: 'Sun ray', fill: '#FFF9C4' },
+    { id: 'ray2', d: `M115,40L125,35L120,45Z`, label: 'Sun ray', fill: '#FFF9C4' },
+    { id: 'ray3', d: `M120,75L130,75L125,85Z`, label: 'Sun ray', fill: '#FFF9C4' },
+    { id: 'ray4', d: `M110,105L120,110L115,115Z`, label: 'Sun ray', fill: '#FFF9C4' },
+    { id: 'ray5', d: `M80,120L75,130L85,130Z`, label: 'Sun ray', fill: '#FFF9C4' },
+    { id: 'ray6', d: `M45,105L40,110L45,115Z`, label: 'Sun ray', fill: '#FFF9C4' },
+    { id: 'ray7', d: `M35,75L25,75L30,85Z`, label: 'Sun ray', fill: '#FFF9C4' },
+    { id: 'ray8', d: `M45,40L35,35L40,45Z`, label: 'Sun ray', fill: '#FFF9C4' },
+    
+    // Clouds - smooth, puffy shapes
+    { id: 'cloud1', d: `M180,50Q185,35,200,35Q215,35,220,45Q230,45,230,55Q230,65,220,65Q185,65,180,55Z`, label: 'Cloud', fill: '#FFFFFF' },
+    { id: 'cloud2', d: `M300,70Q305,55,320,55Q335,55,340,65Q350,65,350,75Q350,85,340,85Q305,85,300,75Z`, label: 'Cloud', fill: '#FFFFFF' },
+    
+    // Ground - rolling hills
+    { id: 'ground', d: `M0,200Q100,180,200,200Q300,180,400,200L400,500L0,500Z`, label: 'Ground', fill: '#C8E6C9' },
+    
+    // Path - winding garden path
+    { id: 'path', d: `M150,500Q160,450,180,420Q200,390,220,380Q240,370,260,380Q280,390,300,420Q320,450,330,500Z`, label: 'Garden path', fill: '#D7CCC8' },
+    
+    // LARGE FLOWER 1 (Left) - Sunflower style
+    { id: 'f1_stem', d: r(70, 300, 8, 150), label: 'Flower stem', fill: '#81C784' },
+    { id: 'f1_leaf1', d: leaf(78, 350, 30, 40, false), label: 'Leaf', fill: '#81C784' },
+    { id: 'f1_leaf2', d: leaf(62, 380, 30, 40, true), label: 'Leaf', fill: '#81C784' },
+    
+    // Sunflower petals - 12 clear petals
+    { id: 'f1_p1', d: petal(74, 280, 25, 0), label: 'Petal', fill: '#FFD54F' },
+    { id: 'f1_p2', d: petal(74, 280, 25, 30), label: 'Petal', fill: '#FFD54F' },
+    { id: 'f1_p3', d: petal(74, 280, 25, 60), label: 'Petal', fill: '#FFD54F' },
+    { id: 'f1_p4', d: petal(74, 280, 25, 90), label: 'Petal', fill: '#FFD54F' },
+    { id: 'f1_p5', d: petal(74, 280, 25, 120), label: 'Petal', fill: '#FFD54F' },
+    { id: 'f1_p6', d: petal(74, 280, 25, 150), label: 'Petal', fill: '#FFD54F' },
+    { id: 'f1_p7', d: petal(74, 280, 25, 180), label: 'Petal', fill: '#FFD54F' },
+    { id: 'f1_p8', d: petal(74, 280, 25, 210), label: 'Petal', fill: '#FFD54F' },
+    { id: 'f1_p9', d: petal(74, 280, 25, 240), label: 'Petal', fill: '#FFD54F' },
+    { id: 'f1_p10', d: petal(74, 280, 25, 270), label: 'Petal', fill: '#FFD54F' },
+    { id: 'f1_p11', d: petal(74, 280, 25, 300), label: 'Petal', fill: '#FFD54F' },
+    { id: 'f1_p12', d: petal(74, 280, 25, 330), label: 'Petal', fill: '#FFD54F' },
+    { id: 'f1_center', d: c(74, 280, 18), label: 'Flower center', fill: '#8D6E63' },
+    
+    // LARGE FLOWER 2 (Center) - Rose style
+    { id: 'f2_stem', d: r(196, 280, 8, 170), label: 'Flower stem', fill: '#81C784' },
+    { id: 'f2_leaf1', d: leaf(204, 330, 35, 45, false), label: 'Leaf', fill: '#81C784' },
+    { id: 'f2_leaf2', d: leaf(180, 370, 35, 45, true), label: 'Leaf', fill: '#81C784' },
+    
+    // Rose petals - layered, organic
+    { id: 'f2_p1', d: `M200,240Q185,235,180,250Q185,265,200,260Z`, label: 'Petal', fill: '#F48FB1' },
+    { id: 'f2_p2', d: `M200,240Q215,235,220,250Q215,265,200,260Z`, label: 'Petal', fill: '#F48FB1' },
+    { id: 'f2_p3', d: `M200,260Q185,265,185,280Q195,290,200,285Z`, label: 'Petal', fill: '#F48FB1' },
+    { id: 'f2_p4', d: `M200,260Q215,265,215,280Q205,290,200,285Z`, label: 'Petal', fill: '#F48FB1' },
+    { id: 'f2_p5', d: `M200,240Q190,245,195,255Q200,260,205,255Q210,245,200,240Z`, label: 'Petal', fill: '#F48FB1' },
+    { id: 'f2_center', d: c(200, 260, 12), label: 'Flower center', fill: '#FCE4EC' },
+    
+    // LARGE FLOWER 3 (Right) - Daisy style
+    { id: 'f3_stem', d: r(316, 310, 8, 140), label: 'Flower stem', fill: '#81C784' },
+    { id: 'f3_leaf1', d: leaf(324, 360, 30, 40, false), label: 'Leaf', fill: '#81C784' },
+    { id: 'f3_leaf2', d: leaf(308, 390, 30, 40, true), label: 'Leaf', fill: '#81C784' },
+    
+    // Daisy petals - 10 rounded petals
+    { id: 'f3_p1', d: e(320, 280, 12, 20), label: 'Petal', fill: '#FFFFFF' },
+    { id: 'f3_p2', d: e(335, 290, 20, 12), label: 'Petal', fill: '#FFFFFF' },
+    { id: 'f3_p3', d: e(340, 310, 12, 20), label: 'Petal', fill: '#FFFFFF' },
+    { id: 'f3_p4', d: e(335, 330, 20, 12), label: 'Petal', fill: '#FFFFFF' },
+    { id: 'f3_p5', d: e(320, 340, 12, 20), label: 'Petal', fill: '#FFFFFF' },
+    { id: 'f3_p6', d: e(305, 330, 20, 12), label: 'Petal', fill: '#FFFFFF' },
+    { id: 'f3_p7', d: e(300, 310, 12, 20), label: 'Petal', fill: '#FFFFFF' },
+    { id: 'f3_p8', d: e(305, 290, 20, 12), label: 'Petal', fill: '#FFFFFF' },
+    { id: 'f3_center', d: c(320, 310, 15), label: 'Flower center', fill: '#FFF59D' },
+    
+    // MUSHROOMS - Clear toadstool shapes
+    { id: 'mush1_cap', d: `M120,380Q110,360,130,355Q150,360,140,380Z`, label: 'Mushroom cap', fill: '#EF5350' },
+    { id: 'mush1_stem', d: r(125, 380, 10, 25, 3), label: 'Mushroom stem', fill: '#FAFAFA' },
+    { id: 'mush1_spot1', d: c(120, 368, 4), label: 'Spot', fill: '#FFFFFF' },
+    { id: 'mush1_spot2', d: c(132, 365, 5), label: 'Spot', fill: '#FFFFFF' },
+    { id: 'mush1_spot3', d: c(128, 375, 3.5), label: 'Spot', fill: '#FFFFFF' },
+    
+    { id: 'mush2_cap', d: `M270,400Q262,385,278,380Q294,385,286,400Z`, label: 'Mushroom cap', fill: '#EF5350' },
+    { id: 'mush2_stem', d: r(274, 400, 8, 20, 3), label: 'Mushroom stem', fill: '#FAFAFA' },
+    { id: 'mush2_spot1', d: c(272, 390, 3.5), label: 'Spot', fill: '#FFFFFF' },
+    { id: 'mush2_spot2', d: c(282, 388, 4), label: 'Spot', fill: '#FFFFFF' },
+    
+    // BUTTERFLY - Clear, symmetrical
+    { id: 'butterfly_body', d: e(200, 150, 4, 15), label: 'Butterfly body', fill: '#424242' },
+    { id: 'butterfly_head', d: c(200, 138, 5), label: 'Butterfly head', fill: '#424242' },
+    
+    // Butterfly wings - large, clear shapes
+    { id: 'bfly_wing_tl', d: `M196,145Q170,130,165,150Q170,170,196,160Z`, label: 'Wing', fill: '#BA68C8' },
+    { id: 'bfly_wing_bl', d: `M196,160Q168,165,168,185Q180,195,196,185Z`, label: 'Wing', fill: '#BA68C8' },
+    { id: 'bfly_wing_tr', d: `M204,145Q230,130,235,150Q230,170,204,160Z`, label: 'Wing', fill: '#BA68C8' },
+    { id: 'bfly_wing_br', d: `M204,160Q232,165,232,185Q220,195,204,185Z`, label: 'Wing', fill: '#BA68C8' },
+    
+    // Wing spots
+    { id: 'bfly_spot1', d: c(178, 148, 6), label: 'Wing spot', fill: '#FFFFFF' },
+    { id: 'bfly_spot2', d: c(178, 175, 5), label: 'Wing spot', fill: '#FFFFFF' },
+    { id: 'bfly_spot3', d: c(222, 148, 6), label: 'Wing spot', fill: '#FFFFFF' },
+    { id: 'bfly_spot4', d: c(222, 175, 5), label: 'Wing spot', fill: '#FFFFFF' },
+    
+    // TREES - Simple, clear shapes
+    { id: 'tree1_trunk', d: r(25, 220, 15, 80, 3), label: 'Tree trunk', fill: '#8D6E63' },
+    { id: 'tree1_crown', d: c(32, 210, 30), label: 'Tree crown', fill: '#66BB6A' },
+    
+    { id: 'tree2_trunk', d: r(360, 230, 15, 70, 3), label: 'Tree trunk', fill: '#8D6E63' },
+    { id: 'tree2_crown', d: c(367, 220, 28), label: 'Tree crown', fill: '#66BB6A' },
+    
+    // SMALL FLOWERS - Ground decoration
+    { id: 'small_f1', d: c(40, 420, 8), label: 'Small flower', fill: '#F48FB1' },
+    { id: 'small_f2', d: c(60, 440, 7), label: 'Small flower', fill: '#FFD54F' },
+    { id: 'small_f3', d: c(340, 430, 8), label: 'Small flower', fill: '#BA68C8' },
+    { id: 'small_f4', d: c(360, 450, 7), label: 'Small flower', fill: '#F48FB1' },
+    { id: 'small_f5', d: c(180, 470, 7), label: 'Small flower', fill: '#FFD54F' },
+    { id: 'small_f6', d: c(220, 475, 7), label: 'Small flower', fill: '#FFFFFF' },
   ],
   decorations: [
     // Butterfly antennae
-    { d: 'M184,188Q176,174,178,168 M190,188Q198,174,196,168', stroke: '#999', strokeWidth: 1.2 },
-    // Lily pad notch
-    { d: 'M212,418L212,407 M235,426L235,417', stroke: '#4a7c59', strokeWidth: 1 },
-    // Sun rays (lines from sun)
-    { d: 'M62,18v-10 M62,106v10 M18,60h-10 M106,60h10 M32,30l-7,-7 M99,30l7,-7 M32,90l-7,7 M99,90l7,7', stroke: '#FFD54F', strokeWidth: 1.5 },
-    // Mushroom stem lines
-    { d: 'M144,358v18 M152,358v18 M160,358v18 M292,354v14 M300,354v14', stroke: '#ddd', strokeWidth: 0.8 },
+    { d: 'M197,135Q192,125,194,120 M203,135Q208,125,206,120', stroke: '#424242', strokeWidth: 1.5 },
+    // Flower stem details
+    { d: 'M74,300v-20 M200,280v-20 M320,310v-20', stroke: '#558B2F', strokeWidth: 1.2 },
+    // Path texture
+    { d: 'M160,490Q170,470,180,450 M240,490Q250,470,260,450', stroke: '#BCAAA4', strokeWidth: 1 },
   ],
 }
 
@@ -414,8 +483,6 @@ const woodlandFriends: Scene = {
 }
 
 export const SCENES: Scene[] = [
-  moonlightVillage,
   enchantedGarden,
-  dreamPlanet,
-  woodlandFriends,
+  cozyRoom,
 ]
