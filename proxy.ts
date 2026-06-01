@@ -36,6 +36,7 @@ const isPublicRoute = createRouteMatcher([
   '/clear-my-mind(.*)',
   '/sketch-it(.*)',
   '/color-your-world(.*)',
+  '/gentle-tap-journey(.*)',
 ])
 
 const isDashboardRoute = createRouteMatcher(['/dashboard(.*)'])
