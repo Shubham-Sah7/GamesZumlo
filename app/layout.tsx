@@ -1,5 +1,6 @@
 import { Geist, Geist_Mono } from "next/font/google"
 import { ClerkProvider } from '@clerk/nextjs'
+import type { Metadata, Viewport } from 'next'
 
 import "./globals.css"
 import { ThemeProvider } from "@/components/theme-provider"
@@ -11,6 +12,14 @@ const fontMono = Geist_Mono({
   subsets: ["latin"],
   variable: "--font-mono",
 })
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
+  viewportFit: 'cover', // Important for safe area insets
+}
 
 export default function RootLayout({
   children,

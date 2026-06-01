@@ -10,7 +10,7 @@ export function WelcomeScreen({ onStart }: WelcomeScreenProps) {
   return (
     <HoneydewWelcomeScreen
       title="Brick Breaker"
-      description="Sometimes our thoughts pile up like walls in front of us. Break through them one brick at a time and create space for clarity."
+      description="Sometimes our thoughts build walls in front of us. Break through them one block at a time and make space for clarity."
       onStart={onStart}
     />
   );

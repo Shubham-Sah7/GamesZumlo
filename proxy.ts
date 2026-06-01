@@ -25,10 +25,13 @@ const isPublicRoute = createRouteMatcher([
   '/sign-in(.*)',
   '/sign-up(.*)',
   '/rain-drop-cleanse(.*)',
+  '/brick-breaker(.*)',
+  '/breathe-with-honeydew(.*)',
   '/gratitude-tree(.*)',
   '/cloud-drift(.*)',
   '/lantern-release(.*)',
   '/firefly-catcher(.*)',
+  '/clear-my-mind(.*)',
 ])
 
 const isDashboardRoute = createRouteMatcher(['/dashboard(.*)'])
@@ -36,12 +39,18 @@ const isDashboardRoute = createRouteMatcher(['/dashboard(.*)'])
 export default clerkMiddleware(async (auth, request) => {
   const { userId } = await auth()
 
+  // Allow public routes without authentication
+  if (isPublicRoute(request)) {
+    return NextResponse.next()
+  }
+
   // Redirect unauthenticated users away from dashboard
   if (!userId && isDashboardRoute(request)) {
     return NextResponse.redirect(new URL('/', request.url))
   }
 
-  if (!isPublicRoute(request)) {
+  // Protect all other routes
+  if (!userId) {
     await auth.protect()
   }
 })

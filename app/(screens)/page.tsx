@@ -18,6 +18,14 @@ const GAMES = [
     available: true,
   },
   {
+    emoji: '🫁',
+    title: 'Breathe With Honeydew',
+    description: 'Follow along for a calming breath',
+    href: '/breathe-with-honeydew',
+    category: 'CALM',
+    available: true,
+  },
+  {
     emoji: '☁️',
     title: 'Cloud Drift',
     description: 'Let negative thoughts float away',
