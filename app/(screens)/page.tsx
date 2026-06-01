@@ -10,6 +10,14 @@ const GAMES = [
     available: true,
   },
   {
+    emoji: '🧱',
+    title: 'Brick Breaker',
+    description: 'Break through mental clutter',
+    href: '/brick-breaker',
+    category: 'CLARITY',
+    available: true,
+  },
+  {
     emoji: '☁️',
     title: 'Cloud Drift',
     description: 'Let negative thoughts float away',
@@ -227,6 +235,7 @@ function Zummie({ size = 40 }: { size?: number }) {
 function getCategoryColor(category: string): string {
   const colors: Record<string, string> = {
     RELEASE: 'rgba(87, 169, 154, 0.2)',    // Calm Teal
+    CLARITY: 'rgba(118, 100, 139, 0.25)',  // Lavender Fog
     CALM: 'rgba(184, 203, 190, 0.4)',      // Sage Mist
     MINDFUL: 'rgba(118, 100, 139, 0.2)',   // Lavender Fog
     GRATITUDE: 'rgba(245, 154, 74, 0.2)',  // Warm Sunset

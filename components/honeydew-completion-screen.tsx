@@ -12,9 +12,11 @@ const COLORS = {
 
 interface HoneydewCompletionScreenProps {
   message: string
+  onContinue?: () => void
+  stats?: Array<{ label: string; value: string }>
 }
 
-export function HoneydewCompletionScreen({ message }: HoneydewCompletionScreenProps) {
+export function HoneydewCompletionScreen({ message, onContinue, stats }: HoneydewCompletionScreenProps) {
   const router = useRouter()
   const [opacity, setOpacity] = useState(0)
 
@@ -55,7 +57,7 @@ export function HoneydewCompletionScreen({ message }: HoneydewCompletionScreenPr
 
       {/* Message - Small and lightweight, single line */}
       <p
-        className="text-[14px] text-center mb-16"
+        className="text-[14px] text-center mb-8"
         style={{
           color: COLORS.lavenderFog,
           lineHeight: '1.4',
@@ -65,9 +67,31 @@ export function HoneydewCompletionScreen({ message }: HoneydewCompletionScreenPr
         {message}
       </p>
 
+      {/* Optional Stats */}
+      {stats && stats.length > 0 && (
+        <div className="mb-8 flex gap-8">
+          {stats.map((stat, index) => (
+            <div key={index} className="text-center">
+              <p
+                className="text-[24px] font-medium mb-1"
+                style={{ color: COLORS.deepOcean }}
+              >
+                {stat.value}
+              </p>
+              <p
+                className="text-[12px]"
+                style={{ color: COLORS.lavenderFog, opacity: 0.7 }}
+              >
+                {stat.label}
+              </p>
+            </div>
+          ))}
+        </div>
+      )}
+
       {/* CTA Button */}
       <button
-        onClick={() => router.push('/')}
+        onClick={() => onContinue ? onContinue() : router.push('/')}
         className="w-full max-w-[340px] text-[16px] font-medium transition-all active:scale-[0.97]"
         style={{
           height: '58px',
