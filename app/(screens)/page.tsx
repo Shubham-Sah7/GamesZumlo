@@ -3,6 +3,14 @@ import Link from 'next/link'
 // ── Core Activities (Most Engaging & Actionable) ──────────────────────────────
 const CORE_ACTIVITIES = [
   {
+    emoji: '🎒',
+    title: 'The Backpack',
+    description: 'Identify and release emotional weight',
+    href: '/backpack',
+    category: 'RELEASE',
+    available: true,
+  },
+  {
     emoji: '🫁',
     title: 'Breathe With Honeydew',
     description: 'Follow along for a calming breath',
@@ -64,6 +72,14 @@ const CORE_ACTIVITIES = [
     description: 'Release what no longer serves you',
     href: '/rain-drop-cleanse',
     category: 'RELEASE',
+    available: true,
+  },
+  {
+    emoji: '✨',
+    title: 'Star Jar',
+    description: 'Collect moments of light and positivity',
+    href: '/star-jar',
+    category: 'GRATITUDE',
     available: true,
   },
 ]
